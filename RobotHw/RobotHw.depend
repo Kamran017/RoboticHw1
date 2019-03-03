@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1551604068 source:c:\users\asus\desktop\lessons\c projects\robothw\main.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+
