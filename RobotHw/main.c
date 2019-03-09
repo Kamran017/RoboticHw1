@@ -43,7 +43,7 @@ int main()
     char **lab,buf[3];
     int i,j,flag,row,column,startRow,startColumn,finishRow,finishColumn,exit=0;
     do{
-        //User enter row and column number of labyrinth
+        //User is entering  row and column numbers of labyrinth
         printf("Enter the row and column number respectively:\n");
         scanf("%d %d",&row,&column);
         //memory allocation of row of matrix
@@ -51,85 +51,156 @@ int main()
         for(i=0;i<row;i++){
             *(lab+i)=(char*)malloc(column*sizeof(char));//memory allocation of column of matrix
         };printf("\n");
-
+        //print labyrinth;
         for(i=0;i<row;i++){
             for(j=0;j<column;j++){
-                itoa(create(), buf, 2);//convert integer to string in order to store in char array
+                itoa(create(), buf, 2);//convert integer to string in order to store in character array
                 lab[i][j]=buf[0];
                 printf(" %c  ",lab[i][j]);
             }
             printf("\n");
         };printf("\n");
-
+        //user is defining start and finish positions of labyrinth
         printf("Enter the row and column numbers of start position respectively:\n");
         scanf("%d %d",&startRow,&startColumn);
         printf("\nEnter the row and column numbers of finish position respectively:\n");
         scanf("%d %d",&finishRow,&finishColumn);
         //in order to start matrix indexing process from 0
         startColumn--; startRow--; finishRow--; finishColumn--;
-        //determine position of robot
-        lab[startRow][startColumn]='R';//START POSITION OF LABYHRINTH
+        lab[startRow][startColumn]='>';//START POSITION OF LABYHRINTH
         print(row,column,lab);//print matrix;
+        //control the user defined finish position in order to be sure that
+        //can robot  find the way to that location
+        if(((finishColumn+1!=column)&&(lab[finishRow][finishColumn+1]!='0'))||((finishRow+1!=row)&&(lab[finishRow+1][finishColumn]!='0'))||((finishColumn-1>=0)&&(lab[finishRow][finishColumn-1]!='0'))||((finishRow-1>=0)&&(lab[finishRow-1][finishColumn]!='0'))){
+            while((lab[finishRow][finishColumn]!='A')&&(lab[finishRow][finishColumn]!='V')&&(lab[finishRow][finishColumn]!='>')&&(lab[finishRow][finishColumn]!='<')){
+                if((startColumn+1!=column)&&(lab[startRow][startColumn+1]=='1')){
+                    lab[startRow][startColumn]='+';
+                    lab[startRow][startColumn+1]='>';
+                    startColumn++;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startRow+1!=row)&&(lab[startRow+1][startColumn]=='1')){
+                    lab[startRow][startColumn]='+';
+                    lab[startRow+1][startColumn]='V';
+                    startRow++;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startColumn-1>=0)&&(lab[startRow][startColumn-1]=='1')){
+                    lab[startRow][startColumn]='+';
+                    lab[startRow][startColumn-1]='<';
+                    startColumn--;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startRow-1>=0)&&(lab[startRow-1][startColumn]=='1')){
+                    lab[startRow][startColumn]='+';
+                    lab[startRow-1][startColumn]='A';
+                    startRow--;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                //If there is no way out robot needs to move backward
+                //that is why + symbol is changed to - symbol in order to describe the return
+                else if((startRow-1>=0)&&(lab[startRow-1][startColumn]=='+')){
+                    lab[startRow][startColumn]='-';
+                    lab[startRow-1][startColumn]='A';
+                    startRow--;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startColumn-1>=0)&&(lab[startRow][startColumn-1]=='+')){
+                    lab[startRow][startColumn]='-';
+                    lab[startRow][startColumn-1]='<';
+                    startColumn--;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startRow+1<row)&&(lab[startRow+1][startColumn]=='+')){
+                    lab[startRow][startColumn]='-';
+                    lab[startRow+1][startColumn]='V';
+                    startRow++;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startColumn+1<column)&&(lab[startRow][startColumn+1]=='+')){
+                    lab[startRow][startColumn]='-';
+                    lab[startRow][startColumn+1]='>';
+                    startColumn++;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                //If there is no way out robot needs to move backward again.
+                //In order to describe that robot has been moved from here 2 times
+                //symbol - has  changed to * symbol
+                else if((startColumn+1<column)&&(lab[startRow][startColumn+1]=='-')){
+                    lab[startRow][startColumn]='*';
+                    lab[startRow][startColumn+1]='>';
+                    startColumn++;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startRow+1<row)&&(lab[startRow+1][startColumn]=='-')){
+                    lab[startRow][startColumn]='*';
+                    lab[startRow+1][startColumn]='V';
+                    startRow++;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startColumn-1>=0)&&(lab[startRow][startColumn-1]=='-')){
+                    lab[startRow][startColumn]='*';
+                    lab[startRow][startColumn-1]='<';
+                    startColumn--;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startRow-1>=0)&&(lab[startRow-1][startColumn]=='-')){
+                    lab[startRow][startColumn]='*';
+                    lab[startRow-1][startColumn]='A';
+                    startRow--;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
 
-        while(lab[finishRow][finishColumn]!='R'){
-            if((startColumn+1!=column)&&(lab[startRow][startColumn+1]=='1')){
-                lab[startRow][startColumn]='+';
-                lab[startRow][startColumn+1]='R';
-                startColumn++;
-                print(row,column,lab);//print matrix;
-                delay(1);
+
+
+                //If there is no way out again we need to convert symbol * to symbol +
+                else if((startColumn+1<column)&&(lab[startRow][startColumn+1]=='*')){
+                    lab[startRow][startColumn]='+';
+                    lab[startRow][startColumn+1]='>';
+                    startColumn++;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startRow+1<row)&&(lab[startRow+1][startColumn]=='*')){
+                    lab[startRow][startColumn]='+';
+                    lab[startRow+1][startColumn]='V';
+                    startRow++;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startColumn-1>=0)&&(lab[startRow][startColumn-1]=='*')){
+                    lab[startRow][startColumn]='+';
+                    lab[startRow][startColumn-1]='<';
+                    startColumn--;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+                else if((startRow-1>=0)&&(lab[startRow-1][startColumn]=='*')){
+                    lab[startRow][startColumn]='+';
+                    lab[startRow-1][startColumn]='A';
+                    startRow--;
+                    print(row,column,lab);//print matrix;
+                    delay(1);
+                }
+
+
             }
-            else if((startRow+1!=row)&&(lab[startRow+1][startColumn]=='1')){
-                lab[startRow][startColumn]='+';
-                lab[startRow+1][startColumn]='R';
-                startRow++;
-                print(row,column,lab);//print matrix;
-                delay(1);
-            }
-            else if((lab[startRow][startColumn-1]=='1')&&(startColumn-1>=0)){
-                lab[startRow][startColumn]='+';
-                lab[startRow][startColumn-1]='R';
-                startColumn--;
-                print(row,column,lab);//print matrix;
-                delay(1);
-            }
-            else if((lab[startRow-1][startColumn]=='1')&&(startRow-1>=0)){
-                lab[startRow][startColumn]='+';
-                lab[startRow-1][startColumn]='R';
-                startRow--;
-                print(row,column,lab);//print matrix;
-                delay(1);
-            }
-            //converse
-            else if((lab[startRow-1][startColumn]!='1')&&(lab[startRow-1][startColumn]=='+')&&(startRow-1>=0)){
-                lab[startRow][startColumn]='-';
-                lab[startRow-1][startColumn]='R';
-                startRow--;
-                print(row,column,lab);//print matrix;
-                delay(1);
-            }
-            else if((lab[startRow][startColumn-1]!='1')&&(lab[startRow][startColumn-1]=='+')&&(startColumn-1>=0)){
-                lab[startRow][startColumn]='-';
-                lab[startRow][startColumn-1]='R';
-                startColumn--;
-                print(row,column,lab);//print matrix;
-                delay(1);
-            }
-            else if((lab[startRow+1][startColumn]!='1')&&(lab[startRow+1][startColumn]=='+')&&(startRow+1<row)){
-                lab[startRow][startColumn]='-';
-                lab[startRow+1][startColumn]='R';
-                startRow++;
-                print(row,column,lab);//print matrix;
-                delay(1);
-            }
-            else if((lab[startRow][startColumn+1]!='1')&&(lab[startRow][startColumn+1]=='+')&&(startColumn+1<column)){
-                lab[startRow][startColumn]='-';
-                lab[startRow][startColumn+1]='R';
-                startColumn++;
-                print(row,column,lab);//print matrix;
-                delay(1);
-            }
-        };
+        }
+        else{
+            printf("This labyrinth does not have way out! Please try again!\n\n");
+        }
 
         printf("If you want to finish program please enter 1, otherwise enter 0 : ");
         scanf("%d",&exit);
